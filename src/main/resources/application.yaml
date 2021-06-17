@@ -1,0 +1,33 @@
+spring:
+  jpa:
+    database: postgresql
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: #create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baselineOnMigrate: true
+    locations: filesystem:db/migration
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+
+  datasource:
+    url: jdbc:h2:mem:postgresql;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/MaksimovDataBase
+#    username: postgres
+#    password: 12345678
+#    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 8080
+
