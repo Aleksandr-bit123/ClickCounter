@@ -6,7 +6,9 @@
     <meta charset="utf-8">
     <title>Счетчик кликов</title>
     <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}resources/css/style.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 </head>
+<body>
 <form action="${pageContext.request.contextPath}" method="post">
     <table id="ClickCounterTable"> <!--ClickCounterTable-->
         <caption></caption>
@@ -20,7 +22,6 @@
                 ${counter}
             </td>
         </tr>
-
         <tr>
             <td>
                 <input id="ClickCounterSubmit" type="submit" value="Кликать тут">
@@ -28,8 +29,6 @@
         </tr>
     </table>
 </form>
-<body>
-<div>
-</div>
+<script src="${pageContext.request.contextPath}resources/js/script.js"></script>
 </body>
 </html>
