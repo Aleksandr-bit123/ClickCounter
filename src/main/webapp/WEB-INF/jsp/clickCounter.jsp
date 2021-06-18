@@ -4,7 +4,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <title>Log in with your account</title>
+    <title>Счетчик кликов</title>
     <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}resources/css/style.css">
 </head>
 <form action="${pageContext.request.contextPath}" method="post">

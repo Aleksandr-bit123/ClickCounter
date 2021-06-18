@@ -110,9 +110,11 @@ public class ClickCounterServiceTest {
         thread1.start();
     }
 
-
-
     @Test
-    public void update() {
+    @Transactional
+    public void update() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.post(uri))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andDo(MockMvcRestDocumentation.document(uri));
     }
 }
