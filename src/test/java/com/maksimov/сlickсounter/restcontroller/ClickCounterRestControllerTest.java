@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest(classes = ClickCounterApplication.class)
 @RunWith(SpringRunner.class)
@@ -53,6 +54,7 @@ public class ClickCounterRestControllerTest {
     }
 
     String uri = "/content";
+
     @Test
     public void readDefault() throws Exception{
         MvcResult requestResult = mockMvc.perform(MockMvcRequestBuilders.get(uri))
@@ -73,5 +75,14 @@ public class ClickCounterRestControllerTest {
                 .andDo(MockMvcRestDocumentation.document(uri)).andReturn();
         String result = requestResult.getResponse().getContentAsString();
         assertEquals("100", result );
+    }
+
+    @Test
+    public void checkContentType() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+
     }
 }
