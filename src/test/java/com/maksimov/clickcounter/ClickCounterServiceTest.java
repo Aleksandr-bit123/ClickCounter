@@ -152,7 +152,7 @@ public class ClickCounterServiceTest {
         clickCounterRepository.save(clickCounterEntity);
         mockMvc.perform(MockMvcRequestBuilders.post(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(model().attribute("counter","error"))
+                .andExpect(model().attribute("counter","memory is full"))
                 .andDo(MockMvcRestDocumentation.document(uri));
     }
 

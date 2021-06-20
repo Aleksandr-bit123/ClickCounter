@@ -48,20 +48,24 @@ public class ClickCounterService implements ReadUpdate {
 
     @Override
     @Transactional
-    public boolean update() {
+    public boolean update() throws IndexOutOfBoundsException{
         ClickCounter clickCounter;
         Optional<ClickCounterEntity> clickCounterEntityOptional = clickCounterRepository.findById(1L);
         if (clickCounterEntityOptional.isPresent()) {
-            try {
                 clickCounter = objectMapper.convertValue(clickCounterEntityOptional.get(), ClickCounter.class);
+            try {
                 if (clickCounter.getCounter() != null && clickCounter.getCounter() >= 0L && clickCounter.getCounter() < Long.MAX_VALUE) {
                     clickCounter.increment();
                     ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
                     clickCounterRepository.save(clickCounterEntity);
                     return true;
                 }
+
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
+            }
+            if (clickCounter.getCounter() != null && clickCounter.getCounter().equals(Long.MAX_VALUE)) {
+                throw new IndexOutOfBoundsException("Место для хранения кликов закончилось");
             }
         }
         return false;
