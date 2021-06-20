@@ -1,6 +1,10 @@
 package com.maksimov.clickcounter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maksimov.сlickсounter.ClickCounterApplication;
+import com.maksimov.сlickсounter.db.entity.ClickCounterEntity;
+import com.maksimov.сlickсounter.db.repository.ClickCounterRepository;
+import com.maksimov.сlickсounter.dto.ClickCounter;
 import com.maksimov.сlickсounter.service.ClickCounterService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,6 +38,12 @@ public class ClickCounterServiceTest {
 
     @Autowired
     WebApplicationContext webApplicationContext;
+
+    @Autowired
+    ClickCounterRepository clickCounterRepository;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
@@ -117,6 +127,76 @@ public class ClickCounterServiceTest {
     public void update() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.post(uri))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+//    ***********************************************Negative tests*****************************************************
+
+    @Test
+    @Transactional
+    public void readNegativeValue() throws Exception{
+        ClickCounter clickCounter = new ClickCounter(-1L);
+        ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+        clickCounterRepository.save(clickCounterEntity);
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void updateMaxValue() throws Exception{
+        ClickCounter clickCounter = new ClickCounter(Long.MAX_VALUE);
+        ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+        clickCounterRepository.save(clickCounterEntity);
+        mockMvc.perform(MockMvcRequestBuilders.post(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void readNullCountValue() throws Exception{
+        ClickCounter clickCounter = new ClickCounter(null);
+        ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+        clickCounterRepository.save(clickCounterEntity);
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void readNullIdValue() throws Exception{
+        clickCounterRepository.deleteById(1L);
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void updateNullCountValue() throws Exception{
+        ClickCounter clickCounter = new ClickCounter(null);
+        ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+        clickCounterRepository.save(clickCounterEntity);
+        mockMvc.perform(MockMvcRequestBuilders.post(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void updateNullIdValue() throws Exception{
+        clickCounterRepository.deleteById(1L);
+        mockMvc.perform(MockMvcRequestBuilders.post(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
                 .andDo(MockMvcRestDocumentation.document(uri));
     }
 }

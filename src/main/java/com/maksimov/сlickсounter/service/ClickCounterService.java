@@ -35,8 +35,8 @@ public class ClickCounterService implements ReadUpdate {
         Optional<ClickCounterEntity> clickCounterEntityOptional = clickCounterRepository.findById(1L);
         if (clickCounterEntityOptional.isPresent()) {
             try {
-                clickCounter = objectMapper.convertValue(clickCounterEntityOptional, ClickCounter.class);
-                if (clickCounter.getCounter() < 0L || clickCounter.getCounter() == null) {
+                clickCounter = objectMapper.convertValue(clickCounterEntityOptional.get(), ClickCounter.class);
+                if (clickCounter.getCounter() == null || clickCounter.getCounter() < 0L) {
                     return null;
                 }
             } catch (IllegalArgumentException e) {
@@ -53,8 +53,8 @@ public class ClickCounterService implements ReadUpdate {
         Optional<ClickCounterEntity> clickCounterEntityOptional = clickCounterRepository.findById(1L);
         if (clickCounterEntityOptional.isPresent()) {
             try {
-                clickCounter = objectMapper.convertValue(clickCounterEntityOptional, ClickCounter.class);
-                if (clickCounter.getCounter() >= 0L && clickCounter.getCounter() < Long.MAX_VALUE) {
+                clickCounter = objectMapper.convertValue(clickCounterEntityOptional.get(), ClickCounter.class);
+                if (clickCounter.getCounter() != null && clickCounter.getCounter() >= 0L && clickCounter.getCounter() < Long.MAX_VALUE) {
                     clickCounter.increment();
                     ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
                     clickCounterRepository.save(clickCounterEntity);
