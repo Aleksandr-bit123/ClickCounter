@@ -58,7 +58,7 @@ public class ClickCounterServiceTest {
 
     @Test
     @Transactional
-    public void read1() throws Exception{
+    public void updateAndRead100Values() throws Exception{
         for (int i = 0; i < 100; i++) {
             clickCounterService.update();
         }
@@ -70,7 +70,7 @@ public class ClickCounterServiceTest {
 
     @Test
     @Transactional
-    public void read2() throws Exception{
+    public void updateAndRead10000valuesWithThreads() {
 
         AtomicInteger status = new AtomicInteger(0);
 
@@ -90,13 +90,14 @@ public class ClickCounterServiceTest {
         }
 
         Thread thread1 = new Thread(() -> {
-            while (!status.equals(Integer.valueOf(1000))) {
+            while (!status.equals(1000)) {
                 try {
                     this.wait(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
             try {
                 mockMvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -105,6 +106,7 @@ public class ClickCounterServiceTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         });
 
         thread1.start();

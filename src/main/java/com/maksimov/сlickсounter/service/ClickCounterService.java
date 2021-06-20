@@ -1,56 +1,69 @@
 package com.maksimov.сlickсounter.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maksimov.сlickсounter.db.entity.ClickCounterEntity;
 import com.maksimov.сlickсounter.db.repository.ClickCounterRepository;
 import com.maksimov.сlickсounter.dto.ClickCounter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class ClickCounterService implements ReadUpdate{
-    private final ClickCounterRepository clickCounterRepository;
+import javax.annotation.PostConstruct;
+import java.util.Optional;
 
-    public ClickCounterService(ClickCounterRepository clickCounterRepository) {
+@Service
+public class ClickCounterService implements ReadUpdate {
+    private final ClickCounterRepository clickCounterRepository;
+    private final ObjectMapper objectMapper;
+
+    public ClickCounterService(ClickCounterRepository clickCounterRepository, ObjectMapper objectMapper) {
         this.clickCounterRepository = clickCounterRepository;
+        this.objectMapper = objectMapper;
     }
 
+    @Transactional
+    @PostConstruct
+    public void init() {
+        if (clickCounterRepository.findById(1L).isEmpty()) {
+            ClickCounterEntity clickCounterEntity = objectMapper.convertValue(new ClickCounter(), ClickCounterEntity.class);
+            clickCounterRepository.save(clickCounterEntity);
+        }
+    }
 
     @Override
     public ClickCounter read() {
-        ClickCounter clickCounter = new ClickCounter();
-        Long counter;
-         if (clickCounterRepository.findById(1L).isPresent()) {
-             counter = clickCounterRepository.findById(1L).get().getCounter();
-        } else {
-             counter = 0L;
-         }
-             clickCounter.setCounter(counter);
-         return clickCounter;
+        ClickCounter clickCounter = null;
+        Optional<ClickCounterEntity> clickCounterEntityOptional = clickCounterRepository.findById(1L);
+        if (clickCounterEntityOptional.isPresent()) {
+            try {
+                clickCounter = objectMapper.convertValue(clickCounterEntityOptional, ClickCounter.class);
+                if (clickCounter.getCounter() < 0L || clickCounter.getCounter() == null) {
+                    return null;
+                }
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        return clickCounter;
     }
 
     @Override
     @Transactional
-    public boolean update(){
-        if (clickCounterRepository.findById(1L).isPresent()) {
-            ClickCounterEntity clickCounterEntity = clickCounterRepository.findById(1L).get();
-            Long counter = clickCounterEntity.getCounter();
-            if (counter != null) {
-                if (counter >= 0 && counter < Long.MAX_VALUE) {
-                    clickCounterEntity.setCounter(++counter);
+    public boolean update() {
+        ClickCounter clickCounter;
+        Optional<ClickCounterEntity> clickCounterEntityOptional = clickCounterRepository.findById(1L);
+        if (clickCounterEntityOptional.isPresent()) {
+            try {
+                clickCounter = objectMapper.convertValue(clickCounterEntityOptional, ClickCounter.class);
+                if (clickCounter.getCounter() >= 0L && clickCounter.getCounter() < Long.MAX_VALUE) {
+                    clickCounter.increment();
+                    ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+                    clickCounterRepository.save(clickCounterEntity);
+                    return true;
                 }
-            } else
-            {
-                clickCounterEntity.setCounter(0L);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
-                clickCounterRepository.save(clickCounterEntity);
-                return true;
-        } else {
-            ClickCounterEntity clickCounterEntity = new ClickCounterEntity();
-            clickCounterEntity.setCounter(1L);
-            clickCounterEntity.setId(1L);
-            clickCounterRepository.save(clickCounterEntity);
         }
-
         return false;
     }
 }

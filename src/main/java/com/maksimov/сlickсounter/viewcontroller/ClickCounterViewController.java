@@ -16,13 +16,20 @@ public class ClickCounterViewController {
 
     @GetMapping("/")
     public String readClickCounter(Model model) {
-        model.addAttribute("counter", clickCounterService.read().getCounter());
+        if (clickCounterService.read() != null) {
+            model.addAttribute("counter", clickCounterService.read().getCounter());
+        } else {
+            model.addAttribute("counter", "error");
+        }
         return "clickCounter";
     }
 
     @PostMapping("/")
-    public String updateClickCounter() {
-        clickCounterService.update();
-        return "redirect:/";
+    public String updateClickCounter(Model model) {
+        if (clickCounterService.update()) {
+            return "redirect:/";
+        }
+        model.addAttribute("counter", "error");
+        return "clickCounter";
     }
 }
