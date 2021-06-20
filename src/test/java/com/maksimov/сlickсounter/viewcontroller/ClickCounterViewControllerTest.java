@@ -58,6 +58,7 @@ public class ClickCounterViewControllerTest {
 
     String uri = "/";
 
+    //    ***********************************************Positive tests*************************************************
     @Test
     public void read() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
@@ -212,8 +213,9 @@ public class ClickCounterViewControllerTest {
                 .andDo(MockMvcRestDocumentation.document(uri));
     }
 
+//    ******************************************************************************************************************
     @Test
-    public void checkContentType() throws Exception{
+    public void checkContentEncoding() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().encoding("ISO-8859-1"))
