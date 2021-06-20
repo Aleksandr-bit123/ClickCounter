@@ -9,18 +9,23 @@ form {
     border: solid black 1px;
     align-content: center;
     padding: 20px 20px 20px 20px;
-
+    background-color: lightyellow;
     border-radius: 20px;
+    box-shadow: 0 0 10px 5px rgb(255, 205, 33);
 }
 
 body {
-    font-size: 300%;
+    font-size: 28px;
 }
 
 #counter {
-    font-size: 500%;
+    font-size: 72px;
     color: darkgreen;
     text-align: center;
+    background-image: image("/src/main/webapp/resources/svg/sun.svg");
 }
 
-
+#sun {
+    width: 100px;
+    height: 100px;
+}
