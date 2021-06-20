@@ -1,5 +1,6 @@
 package com.maksimov.сlickсounter.viewcontroller;
 
+import com.maksimov.сlickсounter.dto.ClickCounter;
 import com.maksimov.сlickсounter.service.ClickCounterService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +17,9 @@ public class ClickCounterViewController {
 
     @GetMapping("/")
     public String readClickCounter(Model model) {
-        if (clickCounterService.read() != null) {
-            model.addAttribute("counter", clickCounterService.read().getCounter());
+        ClickCounter clickCounter = clickCounterService.read();
+        if (clickCounter != null) {
+            model.addAttribute("counter", clickCounter.getCounter());
         } else {
             model.addAttribute("counter", "error");
         }

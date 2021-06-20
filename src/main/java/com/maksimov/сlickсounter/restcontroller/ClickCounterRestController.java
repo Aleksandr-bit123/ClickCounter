@@ -1,5 +1,6 @@
 package com.maksimov.сlickсounter.restcontroller;
 
+import com.maksimov.сlickсounter.dto.ClickCounter;
 import com.maksimov.сlickсounter.service.ClickCounterService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,11 @@ public class ClickCounterRestController {
 
     @GetMapping(value = "/content")
     public String read() {
-        return clickCounterService.read().getCounter().toString();
+        ClickCounter clickCounter = clickCounterService.read();
+        if (clickCounter != null) {
+            return clickCounter.getCounter().toString();
+        } else {
+            return "error";
+        }
     }
 }

@@ -170,7 +170,7 @@ public class ClickCounterServiceTest {
 
     @Test
     @Transactional
-    public void readNullIdValue() throws Exception{
+    public void readWithDeletedRecord() throws Exception{
         clickCounterRepository.deleteById(1L);
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -192,7 +192,7 @@ public class ClickCounterServiceTest {
 
     @Test
     @Transactional
-    public void updateNullIdValue() throws Exception{
+    public void updateWithDeletedRecord() throws Exception{
         clickCounterRepository.deleteById(1L);
         mockMvc.perform(MockMvcRequestBuilders.post(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
