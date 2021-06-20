@@ -24,8 +24,3 @@ body {
     text-align: center;
     background-image: image("/src/main/webapp/resources/svg/sun.svg");
 }
-
-#sun {
-    width: 100px;
-    height: 100px;
-}

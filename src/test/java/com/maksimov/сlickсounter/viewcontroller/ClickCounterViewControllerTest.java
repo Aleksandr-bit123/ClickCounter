@@ -1,4 +1,4 @@
-package com.maksimov.clickcounter;
+package com.maksimov.сlickсounter.viewcontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maksimov.сlickсounter.ClickCounterApplication;
@@ -27,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = ClickCounterApplication.class)
 @RunWith(SpringRunner.class)
-public class ClickCounterServiceTest {
+
+public class ClickCounterViewControllerTest {
 
     MockMvc mockMvc;
 
@@ -59,9 +60,9 @@ public class ClickCounterServiceTest {
     @Test
     public void read() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(model().attribute("counter",0L))
-        .andDo(MockMvcRestDocumentation.document(uri));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter",0L))
+                .andDo(MockMvcRestDocumentation.document(uri));
     }
 
     @Test
@@ -71,9 +72,9 @@ public class ClickCounterServiceTest {
             clickCounterService.update();
         }
         mockMvc.perform(MockMvcRequestBuilders.get(uri))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(model().attribute("counter",100L))
-        .andDo(MockMvcRestDocumentation.document(uri));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter",100L))
+                .andDo(MockMvcRestDocumentation.document(uri));
     }
 
     @Test
@@ -108,9 +109,9 @@ public class ClickCounterServiceTest {
 
             try {
                 mockMvc.perform(MockMvcRequestBuilders.get(uri))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(model().attribute("counter",100000L))
-                .andDo(MockMvcRestDocumentation.document(uri));
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(model().attribute("counter",100000L))
+                        .andDo(MockMvcRestDocumentation.document(uri));
             } catch (Exception e) {
                 e.printStackTrace();
             }
