@@ -5,7 +5,7 @@ function mode() {
             $('#counter').html(data);
         },
         error: function(){
-            $('#counter').html("error");
+            $('#counter').html("connection<br>error");
         }
     });
 }

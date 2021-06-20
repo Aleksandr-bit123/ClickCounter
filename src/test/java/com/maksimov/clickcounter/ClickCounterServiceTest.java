@@ -6,6 +6,7 @@ import com.maksimov.сlickсounter.db.entity.ClickCounterEntity;
 import com.maksimov.сlickсounter.db.repository.ClickCounterRepository;
 import com.maksimov.сlickсounter.dto.ClickCounter;
 import com.maksimov.сlickсounter.service.ClickCounterService;
+import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,12 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
@@ -50,7 +48,7 @@ public class ClickCounterServiceTest {
 
     @Before
     public void setUp() {
-        ConfigurableMockMvcBuilder builder =
+        val builder =
                 MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                         .apply(MockMvcRestDocumentation.documentationConfiguration(this.restDocumentation));
         this.mockMvc = builder.build();
@@ -82,13 +80,13 @@ public class ClickCounterServiceTest {
     @Transactional
     public void updateAndRead10000valuesWithThreads() {
 
-        AtomicInteger status = new AtomicInteger(0);
+        final Long[] status = {0L};
 
         Thread thread = new Thread(() -> {
             for (int i = 0; i < 1000; i++) {
                 clickCounterService.update();
                 if (i==999) {
-                    status.getAndIncrement();
+                    status[0]++;
                 }
             }
         });
@@ -100,7 +98,7 @@ public class ClickCounterServiceTest {
         }
 
         Thread thread1 = new Thread(() -> {
-            while (!status.equals(1000)) {
+            while (status[0] != 1000L) {
                 try {
                     this.wait(2000);
                 } catch (InterruptedException e) {
@@ -194,6 +192,18 @@ public class ClickCounterServiceTest {
     @Transactional
     public void updateWithDeletedRecord() throws Exception{
         clickCounterRepository.deleteById(1L);
+        mockMvc.perform(MockMvcRequestBuilders.post(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(model().attribute("counter","error"))
+                .andDo(MockMvcRestDocumentation.document(uri));
+    }
+
+    @Test
+    @Transactional
+    public void updateNegativeCountValue() throws Exception{
+        ClickCounter clickCounter = new ClickCounter(-101L);
+        ClickCounterEntity clickCounterEntity = objectMapper.convertValue(clickCounter, ClickCounterEntity.class);
+        clickCounterRepository.save(clickCounterEntity);
         mockMvc.perform(MockMvcRequestBuilders.post(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(model().attribute("counter","error"))
